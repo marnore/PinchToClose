@@ -37,25 +37,26 @@ public class MultiFingerGestureDetector {
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		pointerCount = Math.min(event.getPointerCount(), fingerCount);
-//		if (pointerCount == fingerCount) {
 			
-			int index = event.getActionIndex();
+//			int index = event.getActionIndex();
 			//for secondary pointer events
-//			switch (event.getActionMasked()) {
-//			case MotionEvent.ACTION_POINTER_DOWN:
-//				break;
-//			case MotionEvent.ACTION_POINTER_UP:
-//				break;
-//			default:
-//				break;
-//			}
+		switch (event.getActionMasked()) {
+		case MotionEvent.ACTION_POINTER_DOWN:
+			listener.onDown(pointerCount);
+			break;
+		case MotionEvent.ACTION_POINTER_UP:
+			listener.onUp(pointerCount);
+			break;
+		default:
+			break;
+		}
 			
-			switch (event.getAction()) {
+		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-					listener.onDown(pointerCount);
+				listener.onDown(pointerCount);
 				break;
 			case MotionEvent.ACTION_UP:
-					listener.onUp(pointerCount);
+				listener.onUp(pointerCount);
 				break;
 			case MotionEvent.ACTION_CANCEL:
 				moving = false;
@@ -74,7 +75,6 @@ public class MultiFingerGestureDetector {
 				
 				break;
 			}
-//		}
 
 		return true;
 	}
@@ -118,21 +118,6 @@ public class MultiFingerGestureDetector {
 				y[pointerIndex] = event.getY(pointerIndex);
 			}
 		}
-	}
-	
-	private void gatherXY_old(MotionEvent event, float x[], float y[], int pointerCount) {
-		String log = "";
-		for (int pointerIndex = 0; pointerIndex < pointerCount; pointerIndex++ ) {
-
-			int pointerId = event.getPointerId(pointerIndex);
-			log += pointerId;
-			if (pointerId >= 0) {
-//				Log.d("temp", "Pointer id is " + pointerId + " index is " + pointerIndex + " x len " + x.length + " " + y.length);
-				x[pointerId] = event.getX(pointerIndex);
-				y[pointerId] = event.getY(pointerIndex);
-			}
-		}
-		Log.d("temp", log);
 	}
 	
 }

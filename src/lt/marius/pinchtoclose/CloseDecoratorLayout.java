@@ -1,11 +1,18 @@
 package lt.marius.pinchtoclose;
 
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
+
 import lt.marius.pinchtoclose.PinchToClose.CustomFinishCallback;
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+//import android.animation.Animator;
+//import android.animation.Animator.AnimatorListener;
+//import android.animation.AnimatorListenerAdapter;
+//import android.animation.AnimatorSet;
+//import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -22,7 +29,6 @@ public class CloseDecoratorLayout extends FrameLayout {
 
 	private static final boolean DEBUG = false;
 	private static boolean closing = false;
-	private static int componentCount = 0;
 	private boolean closeParentActivities = false;
 	private CustomFinishCallback finishCallback;
 	
@@ -42,9 +48,8 @@ public class CloseDecoratorLayout extends FrameLayout {
 	}
 	
 	private void init() {
-//		componentCount++;
 		closing = false;	//just created no closing
-		setBackgroundColor(Color.parseColor("#FE000000"));
+//		setBackgroundColor(Color.parseColor("#FE000000"));
 		try {
 			activity = Activity.class.cast(getContext());
 		} catch (ClassCastException ex) {
@@ -56,7 +61,6 @@ public class CloseDecoratorLayout extends FrameLayout {
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setStrokeWidth(5.f);
 		detector = new MultiFingerGestureDetector(10, gestureListener);
-//		detector.setListener(gestureListener);
 	}
 	
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -67,7 +71,8 @@ public class CloseDecoratorLayout extends FrameLayout {
 		
 		if (rootView == null) {
 			rootView = getRootView();
-			rootView.setBackgroundColor(Color.parseColor("#FE000000"));
+//			rootView.getBackground().setAlpha(254);
+//			rootView.setBackgroundColor(Color.parseColor("#FE000000"));
 		}
 	}
 	
@@ -110,17 +115,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 	
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
-		// TODO Auto-generated method stub
-//		canvas.rotate(180, getMeasuredWidth() / 2, getMeasuredHeight() / 2);
-//		canvas.translate(100, 0);
-//		Bitmap bmp = Bitmap.createBitmap(getMeasuredWidth() / 2, getMeasuredHeight() / 4,
-//				Bitmap.Config.ARGB_4444);
-//		Canvas c = new Canvas();
-//		c.setBitmap(bmp);
-//		canvas.save();
-//		canvas.scale(ratio, ratio, getMeasuredWidth() / 2, getMeasuredHeight() / 2);
 		super.dispatchDraw(canvas);
-//		canvas.restore();
 		if (DEBUG && lines != null && lines[0] != null) {
 			int i, n = lines[2].length;
 			for (i = 0; i < n - 1; i++) {
@@ -130,27 +125,9 @@ public class CloseDecoratorLayout extends FrameLayout {
 				canvas.drawLine(lines[2][0], lines[3][0], lines[2][n - 1], lines[3][n - 1], paint);
 			}
 		}
-//		if (!moving) {
-//			super.dispatchDraw(canvas);
-//		}
-//		canvas.drawRect(new Rect(10, 10, 20, 20), paint);
-//		if (moving) {
-//			canvas.drawColor(Color.WHITE);
-//			canvas.drawBitmap(bmp, currX, currY, paint);
-//		}
 	}
 	
 	private static Paint paint;
-	
-	@Override
-	public void draw(Canvas canvas) {
-//		canvas.rotate(180);
-//		canvas.save();
-		super.draw(canvas);
-//		
-//		canvas.restore();
-//		canvas.drawRect(0, 0, 20, 20, paint);
-	}
 	
 	private void finishActivity() {
 		if (finishCallback != null) {
@@ -183,44 +160,40 @@ public class CloseDecoratorLayout extends FrameLayout {
 			lines[1] = startY;
 			lines[2] = endX;
 			lines[3] = endY;
-			invalidate();
-			if (endX.length == 2 && false) {	//2 fingers
-				if (initialLen == -1) {
-					initialLen = dist(endX[0], endY[0], endX[1], endY[1]);
-				} else {
-					rootView.setScaleX(ratio);
-					rootView.setScaleY(ratio);
-					ratio = dist(endX[0], endY[0], endX[1], endY[1]) / initialLen; 
-				}
-			}
 		}
 		
 		private boolean shrinking = false;
 		@Override
 		public void onAreaChange(float deltaArea) {
-			// TODO Auto-generated method stub
 			shrinking = deltaArea < 0;
 		}
 
 		private float startArea = -1;
 		@Override
 		public void onArea(float newArea) {
-			// TODO Auto-generated method stub
 			if (startArea == -1) {
 				startArea = newArea;
 			} else {
 				ratio = Math.min(1, newArea / startArea);
 				if (ratio <= 1) {
-					rootView.setScaleX(ratio);
-					rootView.setScaleY(ratio);
-					rootView.setAlpha(ratio);
+					ViewHelper.setScaleX(rootView, ratio);
+					ViewHelper.setScaleY(rootView, ratio);
+					ViewHelper.setAlpha(rootView, ratio);
 				}
 			}
 			
 		}
 		
 		@Override
+		public void onDown(int fingerCount) {
+			if (fingerCount == 3) {
+				startArea = -1;
+			}
+		}
+		
+		@Override
 		public void onUp(int fingerCount) {
+			System.out.println(fingerCount);
 			if (ratio <= 0.4) {
 				//close activity
 				animateClose();
