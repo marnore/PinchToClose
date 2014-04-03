@@ -8,6 +8,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
 import lt.marius.pinchtoclose.PinchToClose.CustomFinishCallback;
+import lt.marius.pinchtoclose.algo.AreaAlgorithm;
 //import android.animation.Animator;
 //import android.animation.Animator.AnimatorListener;
 //import android.animation.AnimatorListenerAdapter;
@@ -25,6 +26,12 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
+/**
+ * Layout to be inserted in the Android view hierarchy to
+ * intercept touch events and control closing animation
+ * @author Marius Noreikis
+ * Created: Apr 3, 2014
+ */
 public class CloseDecoratorLayout extends FrameLayout {
 
 	private static final boolean DEBUG = false;
@@ -49,7 +56,6 @@ public class CloseDecoratorLayout extends FrameLayout {
 	
 	private void init() {
 		closing = false;	//just created no closing
-//		setBackgroundColor(Color.parseColor("#FE000000"));
 		try {
 			activity = Activity.class.cast(getContext());
 		} catch (ClassCastException ex) {
@@ -71,8 +77,6 @@ public class CloseDecoratorLayout extends FrameLayout {
 		
 		if (rootView == null) {
 			rootView = getRootView();
-//			rootView.getBackground().setAlpha(254);
-//			rootView.setBackgroundColor(Color.parseColor("#FE000000"));
 		}
 	}
 	
@@ -93,7 +97,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 	
 	private MultiFingerGestureDetector detector;
 	private View rootView;
-	float lines[][] = new float[4][];
+	float lines[][] = new float[4][];	//for debug
 	
 	float startX, startY;
 	float currX = 0, currY = 0;
@@ -140,14 +144,17 @@ public class CloseDecoratorLayout extends FrameLayout {
 			}
 		}
 	}
-	
-	@Override
-	protected void onDetachedFromWindow() {
-		System.out.println("onDetachedFromWindow");
-		super.onDetachedFromWindow();
-	}
 
-	private class CloseDetector extends AdvancedMultiFingerGestureListener {
+	private class CloseDetector extends MultiFingerAreaListener {
+		private static final float RATIO_TO_CLOSE_AFTER_UP = 0.4f;
+		private static final float RATIO_TO_SCALE_BACK = 0.8f;
+		private static final float RATIO_TO_CLOSE_WHILE_SCALING = 0.33f;
+		
+		public CloseDetector() {
+//			super(AreaAlgorithm.DELAUNAY);
+			super();
+		}
+		
 		@Override
 		public void onDeltaMove(float[] dx, float[] dy) {
 		}
@@ -180,6 +187,9 @@ public class CloseDecoratorLayout extends FrameLayout {
 					ViewHelper.setScaleY(rootView, ratio);
 					ViewHelper.setAlpha(rootView, ratio);
 				}
+				if (ratio <= RATIO_TO_CLOSE_WHILE_SCALING) {	//when it is so small just close the activity
+					animateClose();
+				}
 			}
 			
 		}
@@ -193,11 +203,10 @@ public class CloseDecoratorLayout extends FrameLayout {
 		
 		@Override
 		public void onUp(int fingerCount) {
-			System.out.println(fingerCount);
-			if (ratio <= 0.4) {
+			if (ratio <= RATIO_TO_CLOSE_AFTER_UP) {
 				//close activity
 				animateClose();
-			} else if (ratio >= 0.8) {
+			} else if (ratio >= RATIO_TO_SCALE_BACK) {
 				animateBack();
 			} else {
 				if (shrinking) {
@@ -215,6 +224,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 		};
 		
 		private void animateClose() {
+			detector.setListener(null);	// prevent other actions
 			Animator animX = ObjectAnimator.ofFloat(rootView, "scaleX", ratio, Math.min(ratio, 0.3f));
 			Animator animY = ObjectAnimator.ofFloat(rootView, "scaleY", ratio, Math.min(ratio, 0.3f));
 			Animator animA = ObjectAnimator.ofFloat(rootView, "alpha", ratio, 0.0f);
@@ -237,17 +247,6 @@ public class CloseDecoratorLayout extends FrameLayout {
 			anim.start();
 		}
 
-		@Override
-		public void onScale(float scaleFactor) {
-		}
-
-		@Override
-		public void onRotateDelta(float delatAngle) {
-		}
-
-		@Override
-		public void onRotate(float angle) {
-		}
 	}
 
 	public void setCloseAll(boolean closeAll) {

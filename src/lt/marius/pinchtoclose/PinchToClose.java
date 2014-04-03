@@ -32,8 +32,8 @@ public class PinchToClose {
 	 * @param activity Activity which should be closed by pinch
 	 * @param closeAll whether to close parent activities
 	 * @param callback function to be called for closing the activity. 
-	 * Client is responsible for closing the activity. Convenient if you want
-	 * to set the activity result etc. before closing the activity
+	 * Convenient if you want to set the activity result etc. before 
+	 * closing the activity
 	 */
 	public static void init(Activity activity, boolean closeAll, CustomFinishCallback callback) {
 		ViewGroup root = (ViewGroup)activity.findViewById(android.R.id.content);

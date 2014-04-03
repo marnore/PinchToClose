@@ -12,6 +12,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
+            android:textSize="20sp"
             android:layout_marginLeft="22dp"
             android:layout_marginTop="25dp"
             android:text="Pinch me to close!" />

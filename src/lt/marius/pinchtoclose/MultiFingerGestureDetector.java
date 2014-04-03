@@ -33,9 +33,14 @@ public class MultiFingerGestureDetector {
 		moving = false;
 	}
 	
+	public void setListener(MultiFingerGestureListener listener) {
+		this.listener = listener;
+	}
+	
 	private int pointerCount;
 	
 	public boolean onTouchEvent(MotionEvent event) {
+		if (listener == null) return false;
 		pointerCount = Math.min(event.getPointerCount(), fingerCount);
 			
 //			int index = event.getActionIndex();
