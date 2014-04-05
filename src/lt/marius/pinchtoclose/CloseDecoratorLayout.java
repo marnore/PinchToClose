@@ -152,6 +152,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 		
 		public CloseDetector() {
 //			super(AreaAlgorithm.DELAUNAY);
+//			super((AreaAlgorithm) activity.findViewById(R.id.debug));
 			super();
 		}
 		

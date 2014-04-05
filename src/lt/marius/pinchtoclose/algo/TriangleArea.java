@@ -13,7 +13,7 @@ class TriangleArea implements AreaAlgorithm {
 		float c = dist(x[1], y[1], x[2], y[2]);
 		float p = (a + b + c) / 2;
 		float area = (float) Math.sqrt(p * (p - a) * (p - b) * (p - c));
-		System.out.println(area);
+//		System.out.println(area);
 		return area;
 	}
 

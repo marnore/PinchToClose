@@ -16,5 +16,15 @@
             android:layout_marginLeft="22dp"
             android:layout_marginTop="25dp"
             android:text="Pinch me to close!" />
+        <lt.marius.pinchtoclose.testui.DelaunayDebug
+            android:background="#ffeeffee" 
+            android:id="@+id/debug"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/textView1"
+            android:layout_alignParentBottom="true">
+            
+        </lt.marius.pinchtoclose.testui.DelaunayDebug>
 
 </RelativeLayout>
