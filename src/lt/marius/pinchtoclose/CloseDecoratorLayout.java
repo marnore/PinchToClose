@@ -9,11 +9,6 @@ import com.nineoldandroids.view.ViewHelper;
 
 import lt.marius.pinchtoclose.PinchToClose.CustomFinishCallback;
 import lt.marius.pinchtoclose.algo.AreaAlgorithm;
-//import android.animation.Animator;
-//import android.animation.Animator.AnimatorListener;
-//import android.animation.AnimatorListenerAdapter;
-//import android.animation.AnimatorSet;
-//import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -34,10 +29,13 @@ import android.widget.FrameLayout;
  */
 public class CloseDecoratorLayout extends FrameLayout {
 
-	private static final boolean DEBUG = false;
+	private static boolean DEBUG = true;
+	private boolean drawDebug = false;
+	
 	private static boolean closing = false;
 	private boolean closeParentActivities = false;
 	private CustomFinishCallback finishCallback;
+	private AreaAlgorithm algorithm;
 	
 	public CloseDecoratorLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -54,6 +52,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 		init();
 	}
 	
+	private static Paint paint;
 	private void init() {
 		closing = false;	//just created no closing
 		try {
@@ -66,7 +65,9 @@ public class CloseDecoratorLayout extends FrameLayout {
 		paint.setColor(Color.GREEN);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setStrokeWidth(5.f);
+		algorithm = AreaAlgorithm.TRIANGLE;
 		detector = new MultiFingerGestureDetector(10, gestureListener);
+		
 	}
 	
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -80,13 +81,6 @@ public class CloseDecoratorLayout extends FrameLayout {
 		}
 	}
 	
-	private float initialLen = -1;
-	private float ratio = 1;
-	
-	private float dist(float x, float y, float x2, float y2) {
-		return (float) Math.sqrt( (x2 - x) * (x2 - x) + (y2 - y) * (y2 - y) );
-	}
-	
 	private MultiFingerGestureListener gestureListener = new CloseDetector();
 	
 	private Activity activity;
@@ -95,14 +89,12 @@ public class CloseDecoratorLayout extends FrameLayout {
 		this.activity = a;
 	}
 	
+	public void setDebugMode(boolean on) {
+		DEBUG = on;
+	}
+	
 	private MultiFingerGestureDetector detector;
 	private View rootView;
-	float lines[][] = new float[4][];	//for debug
-	
-	float startX, startY;
-	float currX = 0, currY = 0;
-	float dx, dy;
-	boolean moving = false;
 	
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -120,18 +112,18 @@ public class CloseDecoratorLayout extends FrameLayout {
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		super.dispatchDraw(canvas);
-		if (DEBUG && lines != null && lines[0] != null) {
-			int i, n = lines[2].length;
-			for (i = 0; i < n - 1; i++) {
-				canvas.drawLine(lines[2][i], lines[3][i], lines[2][i + 1], lines[3][i + 1], paint);
-			}
-			if (n > 2) {
-				canvas.drawLine(lines[2][0], lines[3][0], lines[2][n - 1], lines[3][n - 1], paint);
-			}
+		if (DEBUG && drawDebug) {
+			algorithm.visualize(canvas, paint);
 		}
 	}
 	
-	private static Paint paint;
+	public void setAlgorithm(AreaAlgorithm algorithm) {
+		this.algorithm = algorithm;
+	}
+	
+	public AreaAlgorithm getAlgorithm() {
+		return algorithm;
+	}
 	
 	private void finishActivity() {
 		if (finishCallback != null) {
@@ -144,33 +136,16 @@ public class CloseDecoratorLayout extends FrameLayout {
 			}
 		}
 	}
+	
 
 	private class CloseDetector extends MultiFingerAreaListener {
 		private static final float RATIO_TO_CLOSE_AFTER_UP = 0.4f;
 		private static final float RATIO_TO_SCALE_BACK = 0.8f;
 		private static final float RATIO_TO_CLOSE_WHILE_SCALING = 0.33f;
 		
-		public CloseDetector() {
-//			super(AreaAlgorithm.DELAUNAY);
-//			super((AreaAlgorithm) activity.findViewById(R.id.debug));
-			super();
-		}
-		
-		@Override
-		public void onDeltaMove(float[] dx, float[] dy) {
-		}
-
-		@Override
-		public void onMove(float[] startX, float[] startY, float[] endX,
-				float[] endY) {
-			super.onMove(startX, startY, endX, endY);
-			lines[0] = startX;
-			lines[1] = startY;
-			lines[2] = endX;
-			lines[3] = endY;
-		}
-		
+		private float ratio = 1;
 		private boolean shrinking = false;
+		
 		@Override
 		public void onAreaChange(float deltaArea) {
 			shrinking = deltaArea < 0;
@@ -179,8 +154,11 @@ public class CloseDecoratorLayout extends FrameLayout {
 		private float startArea = -1;
 		@Override
 		public void onArea(float newArea) {
+			if (DEBUG) {
+				invalidate();
+			}
 			if (startArea == -1) {
-				startArea = newArea;
+				startArea = newArea / ratio;
 			} else {
 				ratio = Math.min(1, newArea / startArea);
 				if (ratio <= 1) {
@@ -197,23 +175,41 @@ public class CloseDecoratorLayout extends FrameLayout {
 		
 		@Override
 		public void onDown(int fingerCount) {
-			if (fingerCount == 3) {
+			if (DEBUG && fingerCount >= 3) {
+				drawDebug = true;
+			}
+			if (fingerCount >= 3) {
 				startArea = -1;
 			}
+			if (fingerCount <= 3) {
+				CloseDecoratorLayout.this.setAlgorithm(AreaAlgorithm.TRIANGLE);
+			} else {
+				CloseDecoratorLayout.this.setAlgorithm(AreaAlgorithm.DELAUNAY);
+			}
+			setAreaAlgorithm(CloseDecoratorLayout.this.getAlgorithm());
+			super.onDown(fingerCount);
 		}
 		
 		@Override
 		public void onUp(int fingerCount) {
-			if (ratio <= RATIO_TO_CLOSE_AFTER_UP) {
-				//close activity
-				animateClose();
-			} else if (ratio >= RATIO_TO_SCALE_BACK) {
-				animateBack();
-			} else {
-				if (shrinking) {
+			if (DEBUG && fingerCount < 3) {
+				drawDebug = false;
+			}
+			startArea = -1;
+			
+			super.onUp(fingerCount);
+			if (fingerCount < 3) {
+				if (ratio <= RATIO_TO_CLOSE_AFTER_UP) {
+					//close activity
 					animateClose();
-				} else {
+				} else if (ratio >= RATIO_TO_SCALE_BACK) {
 					animateBack();
+				} else {
+					if (shrinking) {
+						animateClose();
+					} else {
+						animateBack();
+					}
 				}
 			}
 		}
@@ -246,6 +242,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 			anim.setInterpolator(new DecelerateInterpolator());
 			anim.setDuration((long) (300 * (1 - ratio) / 0.75));
 			anim.start();
+			ratio = 1;
 		}
 
 	}
@@ -253,6 +250,7 @@ public class CloseDecoratorLayout extends FrameLayout {
 	public void setCloseAll(boolean closeAll) {
 		closeParentActivities = closeAll;
 	}
+
 
 	public void setCustomFinishCallback(CustomFinishCallback callback) {
 		this.finishCallback = callback;

@@ -17,6 +17,13 @@ public abstract class MultiFingerAreaListener implements MultiFingerGestureListe
 		this.algorithm = algorithm;
 	}
 	
+
+	public void setAreaAlgorithm(AreaAlgorithm algorithm) {
+		if (algorithm != null) {
+			this.algorithm = algorithm;
+		}
+	}
+	
 	@Override
 	public void onDeltaMove(float[] dx, float[] dy) {
 		
@@ -40,10 +47,10 @@ public abstract class MultiFingerAreaListener implements MultiFingerGestureListe
 	
 	@Override
 	public void onDown(int fingerCount) {
-		if (fingerCount < 3 || fingerCount != this.fingerCount) {
+//		if (fingerCount < 3 || fingerCount != this.fingerCount) {
 			currArea = -1;
-			this.fingerCount = fingerCount;
-		}
+//			this.fingerCount = fingerCount;
+//		}
 	}
 	
 	@Override

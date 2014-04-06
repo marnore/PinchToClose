@@ -1,6 +1,6 @@
 package lt.marius.pinchtoclose.algo;
 
-public interface AreaAlgorithm {
+public interface AreaAlgorithm extends Visualizable {
 
 	public static final AreaAlgorithm TRIANGLE = new TriangleArea();
 	public static final AreaAlgorithm DELAUNAY = new DelaunayArea();

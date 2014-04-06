@@ -16,15 +16,16 @@
             android:layout_marginLeft="22dp"
             android:layout_marginTop="25dp"
             android:text="Pinch me to close!" />
-        <lt.marius.pinchtoclose.testui.DelaunayDebug
-            android:background="#ffeeffee" 
-            android:id="@+id/debug"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+
+        <ToggleButton
+            android:id="@+id/toggleButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/textView1"
-            android:layout_alignParentBottom="true">
-            
-        </lt.marius.pinchtoclose.testui.DelaunayDebug>
+            android:layout_marginBottom="15dp"
+            android:textOn="Hide debug lines"
+            android:textOff="Show debug lines"
+             />
 
 </RelativeLayout>
