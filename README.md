@@ -5,20 +5,28 @@ Android library to close an activity by simply pinching it with 3+ fingers! Why 
 
 ![Screenshot][1]![Screenshot][2]![Screenshot][3]
 
+Author
+-------
+Marius Noreikis
+
+License
+--------
+Apache 2.0
+
 Usage
 --------
 
- * Add PinchToClose as a library to your project
+1) Add PinchToClose as a library to your project
 or less recommended
 copy lt.marius.pinchtoclose package to your Android project
 
- * Set your activity theme to Transparent PinchToClose theme ```android:theme="@style/Transparent"``` or use the example provided in the ```styles.xml```
+2) Set your activity theme to Transparent PinchToClose theme ```android:theme="@style/Transparent"``` or use the example provided in the ```styles.xml```
 
- * Add the following code to the activity that you want to pinch-to-close:
+3) Add the following code to the activity that you want to pinch-to-close:
 ```java
 PinchToClose.init(this);
 ````
- * If you want to have a custom finish code e.g. to set a result before closing the activity:
+If you want to have a custom finish code e.g. to set a result before closing the activity:
 ```java
 PinchToClose.init(this, false, new CustomFinishCallback() {
 			
@@ -38,26 +46,7 @@ For more examples on usage see ```MainActivity.java```
 
 Demo
 ----
-In Play soon
-
-Author
--------
-Marius Noreikis
-
-License
---------
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+In "Google Play" https://play.google.com/store/apps/details?id=lt.marius.pinchtoclose 
 
 [1]: http://imageshack.com/a/img35/8466/ax0d.png
 [2]: http://imageshack.com/a/img822/5497/j3ds.png

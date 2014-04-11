@@ -3,7 +3,7 @@ package lt.marius.pinchtoclosedemo.testui;
 import lt.marius.pinchtoclose.MultiFingerGestureDetector;
 import lt.marius.pinchtoclose.PinchToClose;
 import lt.marius.pinchtoclose.PinchToClose.CustomFinishCallback;
-import lt.marius.pinchtoclosedemo.R;
+import lt.marius.pinchtoclose.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Html;
