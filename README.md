@@ -1,17 +1,9 @@
 PinchToClose
 ============
 
-Android library to close an activity by simply pinching it with 3+ fingers! Why is it convenient and better than a back button? Fistly, we use our ever-increasing-size phones with two hands; secondly, it is cooler!
+Android library to close an activity by simply pinching it with 3+ fingers! Why is it convenient and better than a back button? Firstly, we use our ever-increasing-size phones with two hands; secondly, it is cooler!
 
 ![Screenshot][1]![Screenshot][2]![Screenshot][3]
-
-Author
--------
-Marius Noreikis
-
-License
---------
-Apache 2.0
 
 Usage
 --------
@@ -46,7 +38,31 @@ For more examples on usage see ```MainActivity.java```
 
 Demo
 ----
-In "Google Play" https://play.google.com/store/apps/details?id=lt.marius.pinchtoclose 
+In "Google Play" https://play.google.com/store/apps/details?id=lt.marius.pinchtoclose
+
+Author
+-------
+Marius Noreikis - marius.noreikis@gmail.com
+
+License
+--------
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+   
+Short summary of the License at
+
+   https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 
 [1]: http://imageshack.com/a/img35/8466/ax0d.png
 [2]: http://imageshack.com/a/img822/5497/j3ds.png
