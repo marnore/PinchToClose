@@ -1,7 +1,7 @@
 PinchToClose
 ============
 
-Android library to close an activity by simply pinching it with 3+ fingers! Why is it convenient and better than a back button? Firstly, we use our ever-increasing-size phones with two hands; secondly, it is cooler!
+Android library to close an activity by simply pinching it with 3+ fingers! Why is it convenient and better than a back button? Firstly, we use our ever-increasing-size phones with two hands anyway; secondly, it is cooler!
 
 ![Screenshot][1]![Screenshot][2]![Screenshot][3]
 
@@ -27,12 +27,11 @@ PinchToClose.init(this, false, new CustomFinishCallback() {
 				Toast t = Toast.makeText(getApplicationContext(), "Activity closed", Toast.LENGTH_SHORT);
 				t.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 20);
 				t.show();
-				activity.finish();
 			}
 		});
 ```
 
-Note: _this_ refers to Activity object; init() must be called after ```setContentView()```
+Note: ```this``` refers to _Activity_ object; ```init()``` must be called after ```setContentView()```
 
 For more examples on usage see ```MainActivity.java```
 
