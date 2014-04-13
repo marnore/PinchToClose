@@ -35,6 +35,8 @@ Note: ```this``` refers to _Activity_ object; ```init()``` must be called after 
 
 For more examples on usage see ```MainActivity.java```
 
+This library is dependent on the [NineOldAndroids](https://github.com/JakeWharton/NineOldAndroids/#nine-old-androids) library for targeting pre-Honeycomb devices.
+
 Demo
 ----
 In "Google Play" https://play.google.com/store/apps/details?id=lt.marius.pinchtoclose
