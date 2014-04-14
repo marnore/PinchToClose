@@ -21,6 +21,7 @@
         android:theme="@style/AppTheme" >
         
         <activity android:theme="@style/AppTheme"
+            android:screenOrientation="user"
             android:name="lt.marius.pinchtoclosedemo.testui.MainActivity" 
             android:label="PinchToClose Demo" >
             <intent-filter>

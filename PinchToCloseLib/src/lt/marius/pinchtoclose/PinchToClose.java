@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 /**
@@ -51,11 +53,13 @@ public class PinchToClose {
 	 */
 	public static void init(Activity activity, boolean closeAll, CustomFinishCallback callback, boolean debug) {
 		ViewGroup root = (ViewGroup)activity.findViewById(android.R.id.content);
+		root = findRecursiveRoot(root);
 		if (root == null) {
 			throw new IllegalArgumentException("Root layout not yet initialized." +
 					"This must be called after setContentView()");
 		}
 		CloseDecoratorLayout layout = new CloseDecoratorLayout(activity);
+		layout.setBackgroundColor(Color.BLACK);
 		layout.setDebugMode(debug);
 		layout.setId(CLOSE_DECORATOR_ID);
 		ViewGroup existing = (ViewGroup)root.findViewById(CLOSE_DECORATOR_ID);
@@ -96,6 +100,13 @@ public class PinchToClose {
 		}
 		
 	}	
+	
+	private static ViewGroup findRecursiveRoot(ViewGroup view) {
+		if (view.getParent() != null && view.getParent() instanceof ViewGroup) {
+			return findRecursiveRoot((ViewGroup) view.getParent());
+		}
+		return view;
+	}
 	
 	
 }
